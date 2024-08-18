@@ -216,12 +216,12 @@ elif [ "$BENCHMARK" == "eq-bench" ]; then
     python ../llm-autoeval/main.py ./evals $(($end-$start))
 
 elif [ "$BENCHMARK" == "ifeval" ]; then
-    git clone https://github.com/chujiezheng/chat_templates
+    git clone https://github.com/LostRuins/koboldcpp kcpp
     git clone https://github.com/EleutherAI/lm-evaluation-harness
     
     curl -fLo koboldcpp https://github.com/LostRuins/koboldcpp/releases/latest/download/koboldcpp-linux-x64-cuda1150 && chmod +x koboldcpp
     huggingface-cli download --include=${MODEL_FILE} ${MODEL_ID} --local-dir model
-    ./koboldcpp --model model/${MODEL_FILE} --port 5001 --usecublas normal --contextsize 8192 --gpulayers 999 --chatcompletionsadapter chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja --flashattention > /tmp/server.log 2> /tmp/server.stderr.log &
+    ./koboldcpp --model model/${MODEL_FILE} --port 5001 --usecublas normal --contextsize 8192 --gpulayers 999 --chatcompletionsadapter kcpp/kcpp_adapters/${CHAT_TEMPLATE}.jinja --flashattention > /tmp/server.log 2> /tmp/server.stderr.log &
     PID=$!
     
     cd lm-evaluation-harness
