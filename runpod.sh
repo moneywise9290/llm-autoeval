@@ -224,6 +224,10 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
 
     benchmark="ifeval"
     echo "================== $(echo $benchmark | tr '[:lower:]' '[:upper:]') [1/1] =================="
+    until curl --output /dev/null --silent --head --fail http://127.0.0.1:8000; do
+        printf '.'
+        sleep 5
+    done
     env HF_TOKEN={HUGGINGFACE_TOKEN} vllm serve ${MODEL_ID} --api-key DEPLOY --max-model-len 8192 --chat-template ../chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja &
     PID=$!
     sleep 60
