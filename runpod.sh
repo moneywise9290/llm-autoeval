@@ -19,7 +19,7 @@ done
 
 # Install dependencies
 apt update
-apt install -y screen vim git-lfs unzip
+apt install -y screen vim git-lfs
 screen
 
 # Install common libraries
@@ -216,11 +216,12 @@ elif [ "$BENCHMARK" == "eq-bench" ]; then
     python ../llm-autoeval/main.py ./evals $(($end-$start))
 
 elif [ "$BENCHMARK" == "ifeval" ]; then
+    git clone https://github.com/chujiezheng/chat_templates
     git clone https://github.com/EleutherAI/lm-evaluation-harness
-
-    wget https://github.com/ggerganov/llama.cpp/releases/download/b3600/llama-b3600-bin-ubuntu-x64.zip
-    unzip llama-b3600-bin-ubuntu-x64.zip
-    build/bin/llama-server --n-gpu-layers 99 --hf-repo ${MODEL_ID} --hf-file ${MODEL_FILE} --api-key DEPLOY -c 8192 --chat-template ${CHAT_TEMPLATE} --hf-token ${HUGGINGFACE_TOKEN} > /tmp/server.log 2> /tmp/server.stderr.log &
+    
+    curl -fLo koboldcpp https://github.com/LostRuins/koboldcpp/releases/latest/download/koboldcpp-linux-x64-cuda1150 && chmod +x koboldcpp
+    huggingface-cli download --include=${MODEL_FILE} ${MODEL_ID} --local-dir model
+    ./koboldcpp --model model/${MODEL_FILE} --port 5001 --usecublas normal --contextsize 8192 --gpulayers 999 --chatcompletionsadapter chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja --flashattention > /tmp/server.log 2> /tmp/server.stderr.log &
     PID=$!
     
     cd lm-evaluation-harness
@@ -229,7 +230,7 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
 
     benchmark="ifeval"
     echo "================== $(echo $benchmark | tr '[:lower:]' '[:upper:]') [1/1] =================="
-    until curl --output /dev/null --silent --fail -H "Authorization: Bearer DEPLOY" http://127.0.0.1:8080/v1/models; do
+    until curl --output /dev/null --silent --fail -H "Authorization: Bearer DEPLOY" http://127.0.0.1:5001/v1/models; do
         printf '.'
         sleep 5
     done
@@ -251,7 +252,7 @@ EOF
  
     env OPENAI_API_KEY=DEPLOY accelerate launch -m lm_eval \
         --model local-chat-completions \
-        --model_args base_url=http://127.0.0.1:8080/v1/chat/completions,model=${MODEL_ID} \
+        --model_args base_url=http://127.0.0.1:5001/v1/chat/completions,model=${MODEL_ID} \
         --tasks ifeval \
         --batch_size auto \
         --wandb_args project=$WANDB_PROJECT \
