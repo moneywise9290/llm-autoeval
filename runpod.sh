@@ -224,16 +224,18 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
 
     benchmark="ifeval"
     echo "================== $(echo $benchmark | tr '[:lower:]' '[:upper:]') [1/1] =================="
-    accelerate launch -m lm_eval \
-        --model vllm \
-        --model_args pretrained=${MODEL_ID},dtype=auto,trust_remote_code=$TRUST_REMOTE_CODE,max-model-len=8192,chat-template=../chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja \
+    env HF_TOKEN={HUGGINGFACE_TOKEN} vllm serve {MODEL_ID} --api-key DEPLOY --max-model-len 8192 --chat-template ../chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja &
+    PID=$!
+    env OPENAI_API_KEY=DEPLOY accelerate launch -m lm_eval \
+        --model openai-chat-completions \
+        --model_args base_url=http://127.0.0.1:8000/v1/chat/completions,model=${MODEL_ID} \
         --tasks ifeval \
-        --num_fewshot 0 \
         --batch_size auto \
         --wandb_args project=$WANDB_PROJECT \
         --output_path ./evals/${benchmark}.json
 
     end=$(date +%s)
+    kill -9 $PID
 
     python ../llm-autoeval/main.py ./evals $(($end-$start))
 
