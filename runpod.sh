@@ -220,7 +220,7 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
 
     wget https://github.com/ggerganov/llama.cpp/releases/download/b3600/llama-b3600-bin-ubuntu-x64.zip
     unzip llama-b3600-bin-ubuntu-x64.zip
-    build/bin/llama-server --hf-repo ${MODEL_ID} --hf-file ${MODEL_FILE} --api-key DEPLOY -c 8192 --chat-template ${CHAT_TEMPLATE} --hf-token ${HUGGINGFACE_TOKEN} > /tmp/server.log 2> /tmp/server.stderr.log &
+    build/bin/llama-server --n-gpu-layers 99 --hf-repo ${MODEL_ID} --hf-file ${MODEL_FILE} --api-key DEPLOY -c 8192 --chat-template ${CHAT_TEMPLATE} --hf-token ${HUGGINGFACE_TOKEN} > /tmp/server.log 2> /tmp/server.stderr.log &
     PID=$!
     
     cd lm-evaluation-harness
