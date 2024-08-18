@@ -230,12 +230,28 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
         printf '.'
         sleep 5
     done
+    echo << EOF | git apply -
+diff --git a/lm_eval/models/openai_completions.py b/lm_eval/models/openai_completions.py
+index c2e81c87..030e44e8 100644
+--- a/lm_eval/models/openai_completions.py
++++ b/lm_eval/models/openai_completions.py
+@@ -118,7 +118,7 @@ class LocalChatCompletion(LocalCompletionsAPI):
+         if not isinstance(stop, (list, tuple)):
+             stop = [stop]
+         return {
+-            "messages": messages,
++                "messages": [{"role": "system", "content": "You are a knowledgeable, efficient, and direct AI assistant. Provide concise answers, focusing on the key information needed. Offer suggestions tactfully when appropriate to improve outcomes. Engage in productive collaboration with the user."}, {"role": "user", "content": messages}],
+             "model": self.model,
+             "max_tokens": max_tokens,
+             "temperature": temperature,
+ EOF
+ 
     env OPENAI_API_KEY=DEPLOY accelerate launch -m lm_eval \
-        --model openai-chat-completions \
+        --model local-chat-completions \
         --model_args base_url=http://127.0.0.1:8000/v1/chat/completions,model=${MODEL_ID} \
         --tasks ifeval \
         --batch_size auto \
-        --wandb_args project=$WANDB_PROJECT --verbosity DEBUG \
+        --wandb_args project=$WANDB_PROJECT \
         --output_path ./evals/${benchmark}.json
 
     end=$(date +%s)
