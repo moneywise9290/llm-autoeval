@@ -224,7 +224,7 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
 
     benchmark="ifeval"
     echo "================== $(echo $benchmark | tr '[:lower:]' '[:upper:]') [1/1] =================="
-    env HF_TOKEN={HUGGINGFACE_TOKEN} vllm serve ${MODEL_ID} --api-key DEPLOY --max-model-len 8192 --chat-template ../chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja > /tmp/vllm.log &
+    env HF_TOKEN={HUGGINGFACE_TOKEN} vllm serve ${MODEL_ID} --api-key DEPLOY --max-model-len 8192 --chat-template ../chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja > /tmp/vllm.log 2> /tmp/vllm.stderr.log &
     PID=$!
     until curl --output /dev/null --silent --fail -H "Authorization: Bearer DEPLOY" http://127.0.0.1:8000/v1/models; do
         printf '.'
