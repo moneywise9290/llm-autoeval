@@ -19,7 +19,7 @@ done
 
 # Install dependencies
 apt update
-apt install -y screen vim git-lfs
+apt install -y screen vim git-lfs unzip
 screen
 
 # Install common libraries
