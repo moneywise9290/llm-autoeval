@@ -225,8 +225,8 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
     benchmark="ifeval"
     echo "================== $(echo $benchmark | tr '[:lower:]' '[:upper:]') [1/1] =================="
     env HF_TOKEN={HUGGINGFACE_TOKEN} vllm serve ${MODEL_ID} --api-key DEPLOY --max-model-len 8192 --chat-template ../chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja &
-    sleep 60
     PID=$!
+    sleep 60
     env OPENAI_API_KEY=DEPLOY accelerate launch -m lm_eval \
         --model openai-chat-completions \
         --model_args base_url=http://127.0.0.1:8000/v1/chat/completions,model=${MODEL_ID} \
