@@ -216,12 +216,11 @@ elif [ "$BENCHMARK" == "eq-bench" ]; then
     python ../llm-autoeval/main.py ./evals $(($end-$start))
 
 elif [ "$BENCHMARK" == "ifeval" ]; then
-    git clone https://github.com/chujiezheng/chat_templates
     git clone https://github.com/EleutherAI/lm-evaluation-harness
 
     wget https://github.com/ggerganov/llama.cpp/releases/download/b3600/llama-b3600-bin-ubuntu-x64.zip
     unzip llama-b3600-bin-ubuntu-x64.zip
-    build/bin/llama-server --hf-repo ${MODEL_ID} --hf-file ${MODEL_FILE} --api-key DEPLOY -c 8192 --chat-template chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja > /tmp/server.log 2> /tmp/server.stderr.log &
+    build/bin/llama-server --hf-repo ${MODEL_ID} --hf-file ${MODEL_FILE} --api-key=DEPLOY -c 8192 --chat-template ${CHAT_TEMPLATE} > /tmp/server.log 2> /tmp/server.stderr.log &
     PID=$!
     
     cd lm-evaluation-harness
