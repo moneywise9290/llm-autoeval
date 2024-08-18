@@ -219,12 +219,12 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
     git clone https://github.com/chujiezheng/chat_templates
     git clone https://github.com/EleutherAI/lm-evaluation-harness
     cd lm-evaluation-harness
-    pip install -e .[ifeval,wandb,vllm]
+    pip install -e .[ifeval,wandb,vllm,api]
     pip install accelerate
 
     benchmark="ifeval"
     echo "================== $(echo $benchmark | tr '[:lower:]' '[:upper:]') [1/1] =================="
-    env HF_TOKEN={HUGGINGFACE_TOKEN} vllm serve {MODEL_ID} --api-key DEPLOY --max-model-len 8192 --chat-template ../chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja &
+    env HF_TOKEN={HUGGINGFACE_TOKEN} vllm serve ${MODEL_ID} --api-key DEPLOY --max-model-len 8192 --chat-template ../chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja &
     PID=$!
     env OPENAI_API_KEY=DEPLOY accelerate launch -m lm_eval \
         --model openai-chat-completions \
