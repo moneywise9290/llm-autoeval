@@ -236,7 +236,7 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
     pip install -e .[ifeval,wandb,api]
     pip install accelerate
 
-    python3 -c "import nltk;nltk.download('wordnet')"
+    python3 -c "import nltk;nltk.download('wordnet');nltk.download('punkt');nltk.download('punkt_tab')"
 
     benchmark="ifeval"
     echo "================== $(echo $benchmark | tr '[:lower:]' '[:upper:]') [1/1] =================="
