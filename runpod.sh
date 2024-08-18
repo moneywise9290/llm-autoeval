@@ -218,15 +218,20 @@ elif [ "$BENCHMARK" == "eq-bench" ]; then
 elif [ "$BENCHMARK" == "ifeval" ]; then
     git clone https://github.com/chujiezheng/chat_templates
     git clone https://github.com/EleutherAI/lm-evaluation-harness
+
+    wget https://github.com/ggerganov/llama.cpp/releases/download/b3600/llama-b3600-bin-ubuntu-x64.zip
+    unzip llama-b3600-bin-ubuntu-x64.zip
+    huggingface-cli download --include=${MODEL_FILE} ${MODEL_ID}
+    build/bin/llama-server -m ${MODEL_FILE} --api-key DEPLOY -c 8192 --chat-template ../chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja > /tmp/server.log 2> /tmp/server.stderr.log &
+    PID=$!
+    
     cd lm-evaluation-harness
-    pip install -e .[ifeval,wandb,vllm,api]
+    pip install -e .[ifeval,wandb,api]
     pip install accelerate
 
     benchmark="ifeval"
     echo "================== $(echo $benchmark | tr '[:lower:]' '[:upper:]') [1/1] =================="
-    env HF_TOKEN=${HUGGINGFACE_TOKEN} vllm serve ${MODEL_ID} --api-key DEPLOY --max-model-len 8192 --chat-template ../chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja > /tmp/vllm.log 2> /tmp/vllm.stderr.log &
-    PID=$!
-    until curl --output /dev/null --silent --fail -H "Authorization: Bearer DEPLOY" http://127.0.0.1:8000/v1/models; do
+    until curl --output /dev/null --silent --fail -H "Authorization: Bearer DEPLOY" http://127.0.0.1:8080/v1/models; do
         printf '.'
         sleep 5
     done
@@ -248,7 +253,7 @@ EOF
  
     env OPENAI_API_KEY=DEPLOY accelerate launch -m lm_eval \
         --model local-chat-completions \
-        --model_args base_url=http://127.0.0.1:8000/v1/chat/completions,model=${MODEL_ID} \
+        --model_args base_url=http://127.0.0.1:8080/v1/chat/completions,model=${MODEL_ID} \
         --tasks ifeval \
         --batch_size auto \
         --wandb_args project=$WANDB_PROJECT \
