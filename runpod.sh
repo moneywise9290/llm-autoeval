@@ -228,6 +228,8 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
     pip install -e .[ifeval,wandb,api]
     pip install accelerate
 
+    python3 -c "import nltk;nltk.download('wordnet')"
+
     benchmark="ifeval"
     echo "================== $(echo $benchmark | tr '[:lower:]' '[:upper:]') [1/1] =================="
     until curl --output /dev/null --silent --fail -H "Authorization: Bearer DEPLOY" http://127.0.0.1:5001/v1/models; do
