@@ -215,6 +215,27 @@ elif [ "$BENCHMARK" == "eq-bench" ]; then
 
     python ../llm-autoeval/main.py ./evals $(($end-$start))
 
+elif [ "$BENCHMARK" == "ifeval" ]; then
+    git clone https://github.com/EleutherAI/lm-evaluation-harness
+    cd lm-evaluation-harness
+    pip install -e .[ifeval,wandb]
+    pip install accelerate
+
+    benchmark="ifeval"
+    echo "================== $(echo $benchmark | tr '[:lower:]' '[:upper:]') [1/1] =================="
+    accelerate launch -m lm_eval \
+        --model hf \
+        --model_args pretrained=${MODEL_ID},dtype=auto,trust_remote_code=$TRUST_REMOTE_CODE \
+        --tasks ifeval \
+        --num_fewshot 0 \
+        --batch_size auto \
+        --wandb_args project=$WANDB_PROJECT \
+        --output_path ./evals/${benchmark}.json
+
+    end=$(date +%s)
+
+    python ../llm-autoeval/main.py ./evals $(($end-$start))
+
 else
     echo "Error: Invalid BENCHMARK value. Please set BENCHMARK to 'nous', 'openllm', or 'lighteval'."
 fi
