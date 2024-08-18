@@ -229,7 +229,7 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
     
     curl -fLo koboldcpp https://github.com/LostRuins/koboldcpp/releases/latest/download/koboldcpp-linux-x64-cuda1150 && chmod +x koboldcpp
     huggingface-cli download --include=${MODEL_FILE} ${MODEL_ID} --local-dir model
-    ./koboldcpp --model model/${MODEL_FILE} --port 5001 --usecublas normal --contextsize 8192 --gpulayers 999 --chatcompletionsadapter kcpp/kcpp_adapters/${CHAT_TEMPLATE}.jinja --flashattention > /tmp/server.log 2> /tmp/server.stderr.log &
+    ./koboldcpp --model model/${MODEL_FILE} --port 5001 --usecublas normal --contextsize 8192 --gpulayers 999 --chatcompletionsadapter kcpp/kcpp_adapters/${CHAT_TEMPLATE}.json --flashattention > /tmp/server.log 2> /tmp/server.stderr.log &
     PID=$!
     
     cd lm-evaluation-harness
