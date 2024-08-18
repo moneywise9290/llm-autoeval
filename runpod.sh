@@ -235,7 +235,7 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
         --model_args base_url=http://127.0.0.1:8000/v1/chat/completions,model=${MODEL_ID} \
         --tasks ifeval \
         --batch_size auto \
-        --wandb_args project=$WANDB_PROJECT \
+        --wandb_args project=$WANDB_PROJECT --verbosity DEBUG \
         --output_path ./evals/${benchmark}.json
 
     end=$(date +%s)
