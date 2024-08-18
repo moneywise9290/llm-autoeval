@@ -222,7 +222,7 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
     wget https://github.com/ggerganov/llama.cpp/releases/download/b3600/llama-b3600-bin-ubuntu-x64.zip
     unzip llama-b3600-bin-ubuntu-x64.zip
     huggingface-cli download --include=${MODEL_FILE} ${MODEL_ID}
-    build/bin/llama-server -m ${MODEL_FILE} --api-key DEPLOY -c 8192 --chat-template ../chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja > /tmp/server.log 2> /tmp/server.stderr.log &
+    build/bin/llama-server -m ${MODEL_FILE} --api-key DEPLOY -c 8192 --chat-template chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja > /tmp/server.log 2> /tmp/server.stderr.log &
     PID=$!
     
     cd lm-evaluation-harness
