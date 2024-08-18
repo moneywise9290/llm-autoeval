@@ -244,7 +244,7 @@ index c2e81c87..030e44e8 100644
              "model": self.model,
              "max_tokens": max_tokens,
              "temperature": temperature,
- EOF
+EOF
  
     env OPENAI_API_KEY=DEPLOY accelerate launch -m lm_eval \
         --model local-chat-completions \
