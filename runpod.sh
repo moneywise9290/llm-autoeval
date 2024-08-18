@@ -19,7 +19,7 @@ done
 
 # Install dependencies
 apt update
-apt install -y screen vim git-lfs
+apt install -y screen vim git-lfs unzip
 screen
 
 # Install common libraries
@@ -218,6 +218,14 @@ elif [ "$BENCHMARK" == "eq-bench" ]; then
 elif [ "$BENCHMARK" == "ifeval" ]; then
     git clone https://github.com/LostRuins/koboldcpp kcpp
     git clone https://github.com/EleutherAI/lm-evaluation-harness
+
+    # idk dude
+    cd /root
+    mkdir -r nltk_data/corpora
+    cd nltk_data/corpora
+    wget https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip
+    unzip wordnet.zip
+    cd /
     
     curl -fLo koboldcpp https://github.com/LostRuins/koboldcpp/releases/latest/download/koboldcpp-linux-x64-cuda1150 && chmod +x koboldcpp
     huggingface-cli download --include=${MODEL_FILE} ${MODEL_ID} --local-dir model
