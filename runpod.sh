@@ -216,16 +216,17 @@ elif [ "$BENCHMARK" == "eq-bench" ]; then
     python ../llm-autoeval/main.py ./evals $(($end-$start))
 
 elif [ "$BENCHMARK" == "ifeval" ]; then
+    git clone https://github.com/chujiezheng/chat_templates
     git clone https://github.com/EleutherAI/lm-evaluation-harness
     cd lm-evaluation-harness
-    pip install -e .[ifeval,wandb]
+    pip install -e .[ifeval,wandb,vllm]
     pip install accelerate
 
     benchmark="ifeval"
     echo "================== $(echo $benchmark | tr '[:lower:]' '[:upper:]') [1/1] =================="
     accelerate launch -m lm_eval \
-        --model hf \
-        --model_args pretrained=${MODEL_ID},dtype=auto,trust_remote_code=$TRUST_REMOTE_CODE \
+        --model vllm \
+        --model_args pretrained=${MODEL_ID},dtype=auto,trust_remote_code=$TRUST_REMOTE_CODE,max-model-len=8192,chat-template=../chat_templates/chat_templates/${CHAT_TEMPLATE}.jinja \
         --tasks ifeval \
         --num_fewshot 0 \
         --batch_size auto \
