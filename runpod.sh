@@ -221,7 +221,7 @@ elif [ "$BENCHMARK" == "ifeval" ]; then
 
     # idk dude
     cd /root
-    mkdir -r nltk_data/corpora
+    mkdir -p nltk_data/corpora
     cd nltk_data/corpora
     wget https://raw.githubusercontent.com/nltk/nltk_data/gh-pages/packages/corpora/wordnet.zip
     unzip wordnet.zip
