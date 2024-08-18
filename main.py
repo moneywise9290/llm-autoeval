@@ -88,7 +88,7 @@ def _make_lighteval_summary(directory: str, elapsed_time: float) -> str:
 
 def main(directory: str, elapsed_time: float) -> None:
     # Tasks
-    if BENCHMARK == "openllm" or BENCHMARK == "nous" or BENCHMARK == "eq-bench":
+    if BENCHMARK == "openllm" or BENCHMARK == "nous" or BENCHMARK == "eq-bench" or BENCHMARK == "ifeval":
         summary = _make_autoeval_summary(directory, elapsed_time)
     elif BENCHMARK == "lighteval":
         summary = _make_lighteval_summary(directory, elapsed_time)
